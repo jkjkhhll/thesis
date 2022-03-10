@@ -1,5 +1,5 @@
 import gym
-from coingame_env import CoingameEnv
+from envs import CoingameEnv
 
 from stable_baselines3 import DQN
 
@@ -7,7 +7,7 @@ env = CoingameEnv()
 env.reset()
 
 model = DQN("MlpPolicy", env, verbose=1)
-model.learn(total_timesteps=50000)
+model.learn(total_timesteps=2000000)
 
 obs = env.reset()
 
