@@ -1,6 +1,5 @@
 from gridworld.agents import Agent
 from gridworld import Gridworld
-import random
 import numpy as np
 
 

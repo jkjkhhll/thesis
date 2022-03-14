@@ -32,3 +32,7 @@ class PygameRenderer:
         self.screen.blit(surface, (0, 0))
         pygame.display.flip()
         sleep(self.delay)
+
+    def close(self):
+        self.screen = None
+        pygame.quit()

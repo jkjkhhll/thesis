@@ -1,3 +1,4 @@
+#%%
 from gridworld.agents import QTableAgent
 from gridworld import imagetools
 from gridworld.rendering import PygameRenderer

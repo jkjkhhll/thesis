@@ -1,3 +1,4 @@
+#%%
 import gym
 from gridworld.rendering import PygameRenderer
 from gridworld import Gridworld
@@ -10,41 +11,54 @@ class GridworldGymEnv(gym.Env):
         self,
         gridworld_name,
         randomize_agent_positions=False,
+        hide_agent2=False,
+        randomly_remove_coins=False,
+        limit_agent_view=True,
         coin_reward=100,
         finish_reward=200,
         step_cost=1,
-        wall_hit_cost=5,
+        obstacle_hit_cost=5,
         max_steps=None,
         render_delay=0.5,
     ):
         self.gridworld_name = gridworld_name
+        self.hide_agent2 = hide_agent2
+        self.limit_agent_view = limit_agent_view
         self.coin_reward = coin_reward
         self.finish_reward = finish_reward
         self.step_cost = step_cost
-        self.wall_hit_cost = wall_hit_cost
+        self.obstacle_hit_cost = obstacle_hit_cost
         self.max_steps = max_steps
         self.render_delay = render_delay
         self.gridworld = Gridworld(
-            gridworld_name, randomize_agent_positions=randomize_agent_positions
+            gridworld_name,
+            randomize_agent_positions=randomize_agent_positions,
+            randomly_remove_coins=randomly_remove_coins,
+            hide_agent2=hide_agent2,
         )
 
         self.action_space = gym.spaces.Discrete(4)
-        self.observation_space = gym.spaces.Box(
-            low=0, high=255, shape=(1, self.gridworld.vector_size), dtype="uint8"
-        )
+        if limit_agent_view:
+            self.observation_space = gym.spaces.Box(
+                low=0, high=255, shape=(27,), dtype="uint8"
+            )
+        else:
+            self.observation_space = gym.spaces.Box(
+                low=0, high=144, shape=(68,), dtype="uint8"
+            )
 
         self.steps = 0
         self.screen = None
 
     def step(self, action: int):
-        hit_coin, hit_wall, finished = self.gridworld.agent1_action(action)
+        hit_coin, hit_obstacle, finished = self.gridworld.agent1_action(action)
         if hit_coin:
             reward = self.coin_reward - self.step_cost
         else:
             reward = -self.step_cost
 
-        if hit_wall:
-            reward = -self.wall_hit_cost
+        if hit_obstacle:
+            reward = -self.obstacle_hit_cost
 
         self.steps += 1
         if self.max_steps and self.steps >= self.max_steps:
@@ -52,14 +66,20 @@ class GridworldGymEnv(gym.Env):
 
         if finished:
             reward += self.finish_reward
-            self.reset()
 
-        return self.gridworld.to_vector(), reward, finished, {}
+        if self.limit_agent_view:
+            return self.gridworld.get_agent_view(as_vector=True), reward, finished, {}
+        else:
+            return self.gridworld.to_tight_vector(), reward, finished, {}
 
     def reset(self):
         self.gridworld.reset()
         self.steps = 0
-        return self.gridworld.to_vector()
+
+        if self.limit_agent_view:
+            return self.gridworld.get_agent_view(as_vector=True)
+        else:
+            return self.gridworld.to_tight_vector()
 
     def render(self):
         if not self.screen:

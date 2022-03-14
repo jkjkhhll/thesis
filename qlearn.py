@@ -1,3 +1,4 @@
+#%%
 import matplotlib.pyplot as plt
 import numpy as np
 from gridworld.gym import GridworldGymEnv
@@ -8,16 +9,19 @@ from datetime import datetime
 
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
-EPISODES = 20000
-RENDER = True
+EPISODES = 3_000_000
+MAX_STEPS = 1000
 
-RENDER_EVERY = 1000
+RENDER = False
+RENDER_EVERY = 10_000
+RENDER_DELAY = 0.5
+
 STATS_EVERY = 1000
 
-START_EPSILON = 0.5
+START_EPSILON = 1  # 0.5
 START_DECAY = 1
 END_DECAY = EPISODES - EPISODES // 4
-ENV = "12x12_5coin"
+ENV = "12x12_5coin_walls"
 
 # LEARNING_RATE = 0.1
 # DISCOUNT = 0.95
@@ -32,7 +36,12 @@ epsilon = START_EPSILON
 DECAY_VALUE = epsilon / (END_DECAY - START_DECAY)
 
 env = GridworldGymEnv(
-    ENV, randomize_agent_positions=True, max_steps=1000, render_delay=0.5
+    ENV,
+    randomize_agent_positions=True,
+    randomly_remove_coins=True,
+    limit_agent_view=False,
+    max_steps=MAX_STEPS,
+    render_delay=RENDER_DELAY,
 )
 
 # "12x12_5coin", max_steps=1000, render_delay=0.5, wall_hit_cost=0.3, finish_reward=2
@@ -65,12 +74,10 @@ def q_values(state):
     return q_table[ss]
 
 
-state = env.reset()
-
 render = False
 episode_progress = tqdm(range(EPISODES))
 for episode in episode_progress:
-
+    state = env.reset()
     episode_reward = 0
 
     if episode % RENDER_EVERY == 0 and episode != 0:

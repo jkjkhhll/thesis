@@ -1,0 +1,7 @@
+# Legend
+AGENT = 10
+AGENT2 = 11
+WALL = 12
+LOCK1 = 13
+SWITCH = 14
+LOCK = 13
