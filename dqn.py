@@ -1,4 +1,5 @@
-import gym
+# Hand-coded DQN
+
 import torch
 from torch.autograd import Variable
 import random

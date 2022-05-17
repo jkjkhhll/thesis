@@ -1,4 +1,7 @@
 #%%
+
+# Simple table based Q-learning
+
 import matplotlib.pyplot as plt
 import numpy as np
 from gridworld.gym import GridworldGymEnv
@@ -9,10 +12,10 @@ from datetime import datetime
 
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
-EPISODES = 3_000_000
-MAX_STEPS = 1000
+EPISODES = 1_000_000
+MAX_STEPS = 200
 
-RENDER = False
+RENDER = True
 RENDER_EVERY = 10_000
 RENDER_DELAY = 0.5
 
@@ -21,7 +24,7 @@ STATS_EVERY = 1000
 START_EPSILON = 1  # 0.5
 START_DECAY = 1
 END_DECAY = EPISODES - EPISODES // 4
-ENV = "12x12_5coin_walls"
+ENV = "12x12_5coin"
 
 # LEARNING_RATE = 0.1
 # DISCOUNT = 0.95

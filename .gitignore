@@ -1,0 +1,5 @@
+logs
+.vscode
+models
+saved_models/*
+saved_trajectories

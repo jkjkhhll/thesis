@@ -2,6 +2,8 @@
 import gym
 from gridworld.rendering import PygameRenderer
 from gridworld import Gridworld
+import torch
+from torch.nn.functional import normalize
 
 
 class GridworldGymEnv(gym.Env):
@@ -14,22 +16,27 @@ class GridworldGymEnv(gym.Env):
         hide_agent2=False,
         randomly_remove_coins=False,
         limit_agent_view=True,
-        coin_reward=100,
-        finish_reward=200,
-        step_cost=1,
-        obstacle_hit_cost=5,
+        normalize_observation=False,
+        coin_reward=0.1,
+        finish_reward=0.5,
+        step_cost=0.001,
+        obstacle_hit_cost=0.005,
         max_steps=None,
         render_delay=0.5,
     ):
         self.gridworld_name = gridworld_name
         self.hide_agent2 = hide_agent2
         self.limit_agent_view = limit_agent_view
+        self.normalize_observation = normalize_observation
+
         self.coin_reward = coin_reward
         self.finish_reward = finish_reward
         self.step_cost = step_cost
         self.obstacle_hit_cost = obstacle_hit_cost
+
         self.max_steps = max_steps
         self.render_delay = render_delay
+
         self.gridworld = Gridworld(
             gridworld_name,
             randomize_agent_positions=randomize_agent_positions,
@@ -44,7 +51,7 @@ class GridworldGymEnv(gym.Env):
             )
         else:
             self.observation_space = gym.spaces.Box(
-                low=0, high=144, shape=(68,), dtype="uint8"
+                low=0, high=144, shape=(69,), dtype="uint8"
             )
 
         self.steps = 0
@@ -70,7 +77,12 @@ class GridworldGymEnv(gym.Env):
         if self.limit_agent_view:
             return self.gridworld.get_agent_view(as_vector=True), reward, finished, {}
         else:
-            return self.gridworld.to_tight_vector(), reward, finished, {}
+            if self.normalize_observation:
+                return normalize(
+                    torch.tensor(self.gridworld.to_tight_vector(), dtype=float), dim=0
+                )
+            else:
+                return self.gridworld.to_tight_vector(), reward, finished, {}
 
     def reset(self):
         self.gridworld.reset()
@@ -79,7 +91,12 @@ class GridworldGymEnv(gym.Env):
         if self.limit_agent_view:
             return self.gridworld.get_agent_view(as_vector=True)
         else:
-            return self.gridworld.to_tight_vector()
+            if self.normalize_observation:
+                return normalize(
+                    torch.tensor(self.gridworld.to_tight_vector(), dtype=float), dim=0
+                )
+            else:
+                return self.gridworld.to_tight_vector()
 
     def render(self):
         if not self.screen:

@@ -13,7 +13,7 @@ class Gridworld:
         agent2: Agent = None,
         hide_agent2=False,
         randomize_agent_positions=False,
-        randomly_remove_coins=True,
+        randomly_remove_coins=False,
     ):
         n_rows = 0
         n_cols = 0
@@ -25,7 +25,7 @@ class Gridworld:
 
         with open(f"gridworld/env_definitions/{name}.grid") as f:
             for l in f:
-                row = l.strip().split("|")[1:-1]
+                row = l.strip().split(".")[1:-1]
                 n_cols = len(row)
                 for col, ch in enumerate(row):
                     pos = (col, n_rows)
@@ -39,6 +39,7 @@ class Gridworld:
                         wall_positions.append(pos)
                 n_rows += 1
 
+        self.name = name
         self.n_rows = n_rows
         self.n_cols = n_cols
         self.vector_size = n_rows * n_cols
@@ -170,6 +171,11 @@ class Gridworld:
         vec = []
         vec.append(self.agent1_position[1] * self.n_cols + self.agent1_position[0])
 
+        if self.hide_agent2:
+            vec.append(0)
+        else:
+            vec.append(self.agent2_position[1] * self.n_cols + self.agent2_position[0])
+
         for c in self.coin_positions:
             if not c:
                 vec.append(0)
@@ -201,6 +207,9 @@ class Gridworld:
                 continue
             if n != 0:
                 g.coin_positions[n - 1] = (i % g.n_cols, i // g.n_cols)
+
+        if not g.agent2_position:
+            g.hide_agent2 = True
 
         return g
 

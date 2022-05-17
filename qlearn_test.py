@@ -1,8 +1,6 @@
-from tkinter import Grid
 from gridworld.gym import GridworldGymEnv
 import pickle
 import numpy as np
-import random
 
 
 def state_to_string(state):

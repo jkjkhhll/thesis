@@ -1,3 +1,1 @@
-from .agent import *
-from .greedy import *
-from .qtable import *
+from .agent import Agent

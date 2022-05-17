@@ -1,17 +1,11 @@
-#%%
 from abc import ABC, abstractmethod
 
 # Agent interface
-class Agent(ABC):
+class Renderer(ABC):
     @abstractmethod
-    def step(self, gridworld):
+    def render(self, gridworld):
         pass
 
     @abstractmethod
-    def reset(self):
+    def close(self):
         pass
-
-
-
-
-        

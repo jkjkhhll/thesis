@@ -3,6 +3,7 @@ import os
 
 from gridworld import Gridworld
 from gridworld.imagetools import build_image
+from gridworld.rendering import Renderer
 
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 
@@ -11,7 +12,7 @@ import numpy as np
 from time import sleep
 
 
-class PygameRenderer:
+class PygameRenderer(Renderer):
     def __init__(self, delay: float = 0.1):
         self.delay = delay
         self.screen = None

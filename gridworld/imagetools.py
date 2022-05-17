@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw, ImageFont
 import numpy as np
 from typing import Union
 from gridworld import Gridworld
+from gridworld.legend import AGENT
 
 GRID_SIZE = 40
 FONT = ImageFont.truetype("font/opensans_cond.ttf", 16)
@@ -14,18 +15,18 @@ def build_image(gridworld: Gridworld, draw_agents=True):
 
 
 def build_trajectory_image(gridworld_name, trajectory):
-    start_state = trajectory[0][0][:-1]
+    start_state = trajectory[0][:-1]
     g = Gridworld.from_vector(gridworld_name, start_state)
     image, canvas = _draw_image(g, draw_agents=False)
 
     _draw_circle(canvas, g.agent1_position, "", (180, 180, 180))
 
-    for step in trajectory[0]:
+    for step in trajectory:
         action = step[-1:][0]
         state = list(step[:-1])
         agent_position = (
-            state.index(Gridworld.AGENT) % g.n_cols,
-            state.index(Gridworld.AGENT) // g.n_cols,
+            state.index(AGENT) % g.n_cols,
+            state.index(AGENT) // g.n_cols,
         )
         _draw_action_arrow(canvas, agent_position, action)
 
