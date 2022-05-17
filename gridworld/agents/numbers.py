@@ -3,7 +3,7 @@ from gridworld.agents import Agent
 from gridworld.utils.bfs import bfs
 
 
-class GreedyAgent(Agent):
+class NumbersAgent(Agent):
     def __init__(self, flip_agents=False):
         self.target_coin_position = None
         self.current_path = None
@@ -14,7 +14,9 @@ class GreedyAgent(Agent):
     def _update_target(self, g):
         start = Gridworld.from_vector(g.name, g.to_vector())
         start.hide_agent2 = True
-        target_coin, self.current_path = bfs(start)
+        target_coin, self.current_path = bfs(
+            start,
+        )
         self.target_coin_position = g.coin_positions[target_coin - 1]
 
     def step(self, gridworld: Gridworld):
